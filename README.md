@@ -42,9 +42,6 @@ CREATE TABLE Marriages (
 ```
 ALTER TABLE [Characters] 
 ALTER COLUMN MainNameHe NVARCHAR(100) COLLATE Hebrew_CI_AS NOT NULL;
-דגכדגכדגכ#
-נרנררנררנרנ#
-נרנרנ
 
 ALTER TABLE [CharacterAliases] 
 ALTER COLUMN AliasNameHe NVARCHAR(100) COLLATE Hebrew_CI_AS NOT NULL;
