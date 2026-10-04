@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מאגר דמויות תנ"ך</title>
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f4ebd0; /* Old parchment/paper */
+            --panel-bg: #fffbf0; /* Lighter parchment for panels */
+            --text-main: #2a1f1a; /* Dark ink */
+            --text-muted: #5c4c41; /* Faded ink */
+            --border-light: #c2b295;
+            --border-dark: #5c4c41;
+            --header-bg: #31231a; /* Very dark brown wood/leather */
+            --header-text: #e8dcc6; /* Light text for dark header */
+            --accent-1: #7c2d23; /* Deep classic red */
+            --accent-1-hover: #561e17;
+            --accent-2: #4a5c43; /* Deep olive */
+            --danger: #8b0000;
+            --danger-hover: #600000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Frank Ruhl Libre', serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: url('data:image/svg+xml;utf8,<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" opacity="0.05"/></svg>'); /* Very subtle paper texture */
+            background-attachment: fixed;
+            padding: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            border: 4px double var(--border-light);
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .btn {
+            background-color: var(--accent-1);
+            color: #fffbf0;
+            border: 1px solid var(--border-dark);
+            padding: 0.6rem 1.2rem;
+            border-radius: 3px;
+            font-family: 'Frank Ruhl Libre', serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background-color: var(--accent-1-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        .table-container {
+            background-color: var(--panel-bg);
+            border: 2px solid var(--border-dark);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+        }
+
+        th, td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        th {
+            background-color: #dccbae;
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-bottom: 2px solid var(--border-dark);
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #efe5cd;
+        }
+
+        tbody tr:hover {
+            background-color: #e2d1b3;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(43, 31, 23, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--panel-bg);
+            border: 4px double var(--border-dark);
+            border-radius: 4px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--border-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: #e5d8c1;
+            z-index: 10;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--text-main);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 2rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .tab-btn {
+            background-color: #dfcdad;
+            border: 1px solid var(--border-light);
+            border-bottom: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background-color: #d1bda1;
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            background-color: var(--panel-bg);
+            color: var(--accent-1);
+            border: 2px solid var(--border-dark);
+            border-bottom: 2px solid var(--panel-bg);
+            margin-bottom: -2px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: #fdfaf3;
+            border: 1px solid var(--border-dark);
+            color: var(--text-main);
+            padding: 0.6rem 0.8rem;
+            border-radius: 2px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-1);
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1), 0 0 3px rgba(124, 45, 35, 0.4);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%235c4c41%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: left 1rem top 50%;
+            background-size: 0.65rem auto;
+            padding-left: 2.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .list-item {
+            background-color: #f6efe1;
+            border: 1px solid var(--border-light);
+            border-radius: 3px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .list-item-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .icon-btn:hover {
+            color: var(--danger);
+        }
+
+        .add-mini-form {
+            background-color: #ede2cf;
+            padding: 1.2rem;
+            border-radius: 3px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-light);
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <h1>Torah DB</h1>
+            <button class="btn" onclick="openAddModal()">
+                <i class="fas fa-plus"></i> הוסף דמות
+            </button>
+        </header>
+
+        <div class="table-container">
+            <table id="charactersTable">
+                <thead>
+                    <tr>
+                        <th>מזהה</th>
+                        <th>שם עברי</th>
+                        <th>שם באנגלית</th>
+                        <th>גיל פטירה</th>
+                        <th>אב</th>
+                        <th>אם</th>
+                        <th>בן/בת זוג</th>
+                        <th>שמות נוספים</th>
+                        <th>ילדים</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal for Edit/View Details -->
+    <div class="modal-overlay" id="detailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">פרטי דמות</h2>
+                <button class="close-btn" onclick="closeModal('detailsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('personal')">פרטים אישיים</button>
+                    <button class="tab-btn" onclick="switchTab('aliases')">שמות נוספים</button>
+                    <button class="tab-btn" onclick="switchTab('spouses')">בני/בנות זוג</button>
+                    <button class="tab-btn" onclick="switchTab('children')">ילדים</button>
+                </div>
+
+                <!-- Personal Details Tab -->
+                <div class="tab-pane active" id="tab-personal">
+                    <form id="editForm" onsubmit="handleEditSubmit(event)">
+                        <input type="hidden" id="edit_char_id">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>שם עברי (ראשי)</label>
+                                <input type="text" class="form-control" id="edit_name_he" required>
+                            </div>
+                            <div class="form-group">
+                                <label>שם באנגלית (ראשי)</label>
+                                <input type="text" class="form-control" id="edit_name_en">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>בחר אב</label>
+                                <select class="form-control" id="edit_father_id">
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>בחר אם</label>
+                                <select class="form-control" id="edit_mother_id">
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>גיל פטירה</label>
+                            <input type="number" class="form-control" id="edit_age">
+                        </div>
+                        <div class="action-bar">
+                            <button type="button" class="btn btn-danger" onclick="deleteCurrentCharacter()">
+                                <i class="fas fa-trash"></i> מחק דמות זו
+                            </button>
+                            <button type="submit" class="btn">
+                                <i class="fas fa-save"></i> שמור שינויים
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Aliases Tab -->
+                <div class="tab-pane" id="tab-aliases">
+                    <div class="add-mini-form">
+                        <div class="form-group" style="margin: 0; flex: 1;">
+                            <label>שם עברי</label>
+                            <input type="text" class="form-control" id="new_alias_he">
+                        </div>
+                        <div class="form-group" style="margin: 0; flex: 1;">
+                            <label>שם באנגלית</label>
+                            <input type="text" class="form-control" id="new_alias_en">
+                        </div>
+                        <button class="btn" onclick="addAlias()">הוסף</button>
+                    </div>
+                    <div id="aliasesList">
+                        <!-- Aliases will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Spouses Tab -->
+                <div class="tab-pane" id="tab-spouses">
+                    <div class="add-mini-form">
+                        <div class="form-group" style="margin: 0; flex: 1;">
+                            <label>בחר בן/בת זוג</label>
+                            <select class="form-control" id="new_spouse_id">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <button class="btn" onclick="addSpouse()">קשר בן/בת זוג</button>
+                    </div>
+                    <div id="spousesList">
+                        <!-- Spouses will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Children Tab -->
+                <div class="tab-pane" id="tab-children">
+                    <div class="add-mini-form">
+                        <div class="form-group" style="margin: 0; flex: 1;">
+                            <label>בחר ילד קיים</label>
+                            <select class="form-control" id="new_child_id">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin: 0; width: 120px;">
+                            <label>קשר בתור</label>
+                            <select class="form-control" id="new_child_role" style="padding-left: 2rem;">
+                                <option value="father">אב</option>
+                                <option value="mother">אם</option>
+                            </select>
+                        </div>
+                        <button class="btn" onclick="addChild()">קשר ילד</button>
+                    </div>
+                    <div id="childrenList">
+                        <!-- Children will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Add Character -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>הוספת דמות חדשה</h2>
+                <button class="close-btn" onclick="closeModal('addModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addForm" onsubmit="handleAddSubmit(event)">
+                    <div class="form-group">
+                        <label>שם עברי (ראשי)</label>
+                        <input type="text" class="form-control" id="add_name_he" required>
+                    </div>
+                    <div class="form-group">
+                        <label>שם באנגלית (ראשי)</label>
+                        <input type="text" class="form-control" id="add_name_en">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>בחר אב</label>
+                            <select class="form-control" id="add_father_id">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>בחר אם</label>
+                            <select class="form-control" id="add_mother_id">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>גיל פטירה</label>
+                        <input type="number" class="form-control" id="add_age">
+                    </div>
+                    <div style="text-align: left; margin-top: 2rem;">
+                        <button type="submit" class="btn">
+                            <i class="fas fa-plus"></i> הוסף דמות
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCharacterId = null;
+        let allCharactersList = [];
+
+        // Base API Fetch function
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: { 'Content-Type': 'application/json' }
+            };
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+            try {
+                const response = await fetch(endpoint, options);
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'שגיאה בשרת');
+                return data;
+            } catch (err) {
+                alert(err.message);
+                console.error(err);
+                return null;
+            }
+        }
+
+        // Load all characters on start
+        async function loadCharacters() {
+            const data = await apiCall('/api/characters');
+            if (!data) return;
+            
+            allCharactersList = data; // Store globally for dropdowns
+            
+            const tbody = document.querySelector('#charactersTable tbody');
+            tbody.innerHTML = '';
+            
+            data.forEach(char => {
+                const tr = document.createElement('tr');
+                tr.onclick = () => openDetailsModal(char);
+                tr.innerHTML = `
+                    <td>${char.character_id}</td>
+                    <td><strong>${char.main_name_he || '-'}</strong></td>
+                    <td>${char.main_name_en || '-'}</td>
+                    <td>${char.age_at_death || '-'}</td>
+                    <td>${char.father_name || '-'}</td>
+                    <td>${char.mother_name || '-'}</td>
+                    <td>${char.spouses || '-'}</td>
+                    <td>${char.aliases || '-'}</td>
+                    <td>${char.children || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Helper to populate a select dropdown with characters (excluding the current one)
+        function populateCharacterSelect(selectElementId, excludeId = null, selectedId = null) {
+            const select = document.getElementById(selectElementId);
+            select.innerHTML = '<option value="">-- ללא --</option>';
+            
+            allCharactersList.forEach(c => {
+                if (c.character_id !== excludeId) {
+                    const option = document.createElement('option');
+                    option.value = c.character_id;
+                    const name = c.main_name_he ? c.main_name_he : 'ללא שם';
+                    option.textContent = `${name} (ID: ${c.character_id})`;
+                    if (selectedId && c.character_id == selectedId) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        // Modals Management
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Tab Management
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            
+            document.querySelector(`.tab-btn[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        // Open Add Modal
+        function openAddModal() {
+            document.getElementById('addForm').reset();
+            populateCharacterSelect('add_father_id', null, null);
+            populateCharacterSelect('add_mother_id', null, null);
+            openModal('addModal');
+        }
+
+        // Handle Add Character Submit
+        async function handleAddSubmit(e) {
+            e.preventDefault();
+            const payload = {
+                main_name_he: document.getElementById('add_name_he').value,
+                main_name_en: document.getElementById('add_name_en').value || null,
+                father_id: document.getElementById('add_father_id').value || null,
+                mother_id: document.getElementById('add_mother_id').value || null,
+                age_at_death: document.getElementById('add_age').value || null
+            };
+            
+            const res = await apiCall('/api/characters/add', 'POST', payload);
+            if (res && res.success) {
+                closeModal('addModal');
+                loadCharacters();
+            }
+        }
+
+        // Open Details Modal and load data
+        async function openDetailsModal(char) {
+            currentCharacterId = char.character_id;
+            
+            // Populate personal details form
+            document.getElementById('edit_char_id').value = char.character_id;
+            document.getElementById('edit_name_he').value = char.main_name_he || '';
+            document.getElementById('edit_name_en').value = char.main_name_en || '';
+            document.getElementById('edit_age').value = char.age_at_death || '';
+            
+            populateCharacterSelect('edit_father_id', char.character_id, char.father_id);
+            populateCharacterSelect('edit_mother_id', char.character_id, char.mother_id);
+            populateCharacterSelect('new_spouse_id', char.character_id, null);
+            populateCharacterSelect('new_child_id', char.character_id, null);
+            
+            switchTab('personal');
+            openModal('detailsModal');
+            
+            // Load relations in background
+            loadAliases();
+            loadSpouses();
+            loadChildren();
+        }
+
+        // Handle Edit Character Submit
+        async function handleEditSubmit(e) {
+            e.preventDefault();
+            const payload = {
+                character_id: document.getElementById('edit_char_id').value,
+                main_name_he: document.getElementById('edit_name_he').value,
+                main_name_en: document.getElementById('edit_name_en').value || null,
+                father_id: document.getElementById('edit_father_id').value || null,
+                mother_id: document.getElementById('edit_mother_id').value || null,
+                age_at_death: document.getElementById('edit_age').value || null
+            };
+            
+            const res = await apiCall('/api/characters/update', 'POST', payload);
+            if (res && res.success) {
+                alert('נשמר בהצלחה');
+                loadCharacters(); // Refresh main table to get new names and update global list
+            }
+        }
+
+        // Delete current character
+        async function deleteCurrentCharacter() {
+            if (!confirm('האם אתה בטוח שברצונך למחוק דמות זו? זה ימחק גם את קשרי הנישואין שלה.')) return;
+            
+            const res = await apiCall('/api/characters/delete', 'POST', { character_id: currentCharacterId });
+            if (res && res.success) {
+                closeModal('detailsModal');
+                loadCharacters();
+            }
+        }
+
+        // -- Aliases --
+        async function loadAliases() {
+            const list = document.getElementById('aliasesList');
+            list.innerHTML = 'טוען...';
+            const data = await apiCall(`/api/characters/aliases?character_id=${currentCharacterId}`);
+            if (!data) return;
+            
+            list.innerHTML = '';
+            if(data.length === 0) {
+                list.innerHTML = '<div class="text-muted">אין שמות נוספים</div>';
+                return;
+            }
+            
+            data.forEach(alias => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `
+                    <div class="list-item-content">
+                        <strong>${alias.alias_name_he}</strong>
+                        <span style="font-size:0.9rem; color:var(--text-muted)">${alias.alias_name_en || ''}</span>
+                    </div>
+                    <button class="icon-btn" onclick="deleteAlias(${alias.alias_id})" title="מחק"><i class="fas fa-trash"></i></button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        async function addAlias() {
+            const he = document.getElementById('new_alias_he').value;
+            const en = document.getElementById('new_alias_en').value;
+            if(!he) return alert('חובה להזין שם עברי');
+            
+            const res = await apiCall('/api/aliases/add', 'POST', {
+                character_id: currentCharacterId,
+                alias_name_he: he,
+                alias_name_en: en || null
+            });
+            
+            if(res && res.success) {
+                document.getElementById('new_alias_he').value = '';
+                document.getElementById('new_alias_en').value = '';
+                loadAliases();
+            }
+        }
+
+        async function deleteAlias(aliasId) {
+            if(!confirm('למחק שם נוסף זה?')) return;
+            const res = await apiCall('/api/aliases/delete', 'POST', { alias_id: aliasId });
+            if(res && res.success) loadAliases();
+        }
+
+        // -- Spouses --
+        async function loadSpouses() {
+            const list = document.getElementById('spousesList');
+            list.innerHTML = 'טוען...';
+            const data = await apiCall(`/api/characters/spouses?character_id=${currentCharacterId}`);
+            if (!data) return;
+            
+            list.innerHTML = '';
+            if(data.length === 0) {
+                list.innerHTML = '<div class="text-muted">אין בני/בנות זוג רשומים</div>';
+                return;
+            }
+            
+            data.forEach(spouse => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `
+                    <div class="list-item-content">
+                        <strong>${spouse.spouse_name_he}</strong> (ID: ${spouse.spouse_id})
+                    </div>
+                    <button class="icon-btn" onclick="deleteMarriage(${spouse.marriage_id})" title="הסר קשר נישואין"><i class="fas fa-trash"></i></button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        async function addSpouse() {
+            const spouseId = document.getElementById('new_spouse_id').value;
+            if(!spouseId) return alert('חובה לבחור בן/בת זוג');
+            
+            // Assume current char is husband for the insert, backend or UI doesn't strictly enforce gender in DB schema based on requirements so we just insert.
+            const res = await apiCall('/api/marriages/add', 'POST', {
+                husband_id: currentCharacterId,
+                wife_id: spouseId
+            });
+            
+            if(res && res.success) {
+                document.getElementById('new_spouse_id').value = '';
+                loadSpouses();
+            }
+        }
+
+        async function deleteMarriage(marriageId) {
+            if(!confirm('להסיר קשר נישואין זה? (הדמות עצמה לא תימחק)')) return;
+            const res = await apiCall('/api/marriages/delete', 'POST', { marriage_id: marriageId });
+            if(res && res.success) loadSpouses();
+        }
+
+        // -- Children --
+        async function loadChildren() {
+            const list = document.getElementById('childrenList');
+            list.innerHTML = 'טוען...';
+            const data = await apiCall(`/api/characters/children?parent_id=${currentCharacterId}`);
+            if (!data) return;
+            
+            list.innerHTML = '';
+            if(data.length === 0) {
+                list.innerHTML = '<div class="text-muted">אין ילדים רשומים</div>';
+                return;
+            }
+            
+            data.forEach(child => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `
+                    <div class="list-item-content">
+                        <strong>${child.main_name_he}</strong> (ID: ${child.character_id})
+                    </div>
+                    <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="openDetailsForChild(${child.character_id})">צפה בפרטים</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+        
+        async function addChild() {
+            const childId = document.getElementById('new_child_id').value;
+            const role = document.getElementById('new_child_role').value;
+            if(!childId) return alert('חובה לבחור ילד מרשימת הדמויות');
+            
+            const child = allCharactersList.find(c => c.character_id == childId);
+            if(!child) return alert('שגיאה: הילד לא נמצא במערכת');
+
+            const payload = {
+                character_id: child.character_id,
+                main_name_he: child.main_name_he,
+                main_name_en: child.main_name_en || null,
+                father_id: role === 'father' ? currentCharacterId : (child.father_id || null),
+                mother_id: role === 'mother' ? currentCharacterId : (child.mother_id || null),
+                age_at_death: child.age_at_death || null
+            };
+            
+            const res = await apiCall('/api/characters/update', 'POST', payload);
+            if(res && res.success) {
+                document.getElementById('new_child_id').value = '';
+                loadChildren();
+                loadCharacters(); // Reload main data since links changed
+            }
+        }
+        
+        async function openDetailsForChild(childId) {
+            // Close current modal and fetch child data to open it
+            const data = await apiCall(`/api/characters/get?character_id=${childId}`);
+            if(data && data.length > 0) {
+                openDetailsModal(data[0]);
+            }
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', loadCharacters);
+    </script>
+</body>
+</html>
