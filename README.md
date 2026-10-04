@@ -1,4 +1,4 @@
-# ToraDB
+# TorahDB
 The Torah Characters & Genealogy Database
 
 ## About
