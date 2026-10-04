@@ -44,6 +44,6 @@ To run the project locally, follow these steps:
 
 - `app.py` - The main application runner and API definitions.
 - `db/` - Contains the SQLite database file (`torah.db`).
-- `api` - Api..
+- `api/` - Api..
 - `infrastructure/` - Data access layer and query execution functions.
 - `static/` - Frontend assets (HTML, CSS, JS).
