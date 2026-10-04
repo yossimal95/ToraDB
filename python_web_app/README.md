@@ -42,8 +42,8 @@ To run the project locally, follow these steps:
 
 ## 📁 Directory Structure
 
-- `app.py` - The main application runner and API definitions.
+- `app.py` - The main application runner and server configuration.
 - `db/` - Contains the SQLite database file (`torah.db`).
-- `api/` - Api..
+- `api/` - API endpoints and route handlers for frontend-backend communication.
 - `infrastructure/` - Data access layer and query execution functions.
 - `static/` - Frontend assets (HTML, CSS, JS).
