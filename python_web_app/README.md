@@ -1,4 +1,5 @@
 # ToraDB - Python Web Interface
+<img width="1223" height="226" alt="image" src="https://github.com/user-attachments/assets/24ca0eb8-bf9b-48dd-8eee-64b426e674a8" />
 
 This directory contains a complete implementation of the ToraDB project using **Python**, featuring an embedded database (SQLite) and an interactive web user interface.
 The project allows for easy management, browsing, and editing of data regarding Torah characters and their sources in a user-friendly way.
@@ -10,6 +11,7 @@ The project allows for easy management, browsing, and editing of data regarding 
 - **Update:** Seamlessly edit details of existing characters.
 - **Search & Filter:** Quick search capabilities to find specific characters.
 - **Clean Architecture:** Separation of concerns with distinct layers for API, Data Access, and Frontend.
+<img width="617" height="614" alt="image" src="https://github.com/user-attachments/assets/0efd5f60-2122-49ef-afe0-992d2287089a" />
 
 ## 🛠️ Tech Stack
 
@@ -27,21 +29,12 @@ To run the project locally, follow these steps:
    cd ToraDB/python_web_app
    ```
 
-2. **Create a virtual environment (Recommended):**
+2. **Install dependencies:**
    ```bash
-   python -m venv venv
-   # Mac/Linux
-   source venv/bin/activate
-   # Windows
-   venv\Scripts\activate
+   pip install flask
    ```
 
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Run the application:**
+3. **Run the application:**
    ```bash
    python app.py
    ```
@@ -50,10 +43,7 @@ To run the project locally, follow these steps:
 ## 📁 Directory Structure
 
 - `app.py` - The main application runner and API definitions.
-- `DB/` - Contains the SQLite database file (`torah.db`).
+- `db/` - Contains the SQLite database file (`torah.db`).
+- `api` - Api..
 - `infrastructure/` - Data access layer and query execution functions.
 - `static/` - Frontend assets (HTML, CSS, JS).
-- `requirements.txt` - Required Python packages.
-
----
-*This project is designed to make Torah data accessible in a modern, developer-friendly, and end-user-friendly format.*
