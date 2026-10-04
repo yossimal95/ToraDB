@@ -1,7 +1,7 @@
-# ToraDB - Python Web Interface
+# TorahDB - Python Web Interface
 <img width="1208" height="213" alt="image" src="https://github.com/user-attachments/assets/6c804191-d4bc-4867-8a13-8b5c4bc8df94" />
 
-This directory contains a complete implementation of the ToraDB project using **Python**, featuring an embedded database (SQLite) and an interactive web user interface.
+This directory contains a complete implementation of the TorahDB project using **Python**, featuring an embedded database (SQLite) and an interactive web user interface.
 The project allows for easy management, browsing, and editing of data regarding Torah characters and their sources in a user-friendly way.
 
 ## ✨ Features
@@ -25,8 +25,8 @@ To run the project locally, follow these steps:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yossimal95/ToraDB.git
-   cd ToraDB/python_web_app
+   git clone https://github.com/yossimal95/TorahDB.git
+   cd TorahDB/python_web_app
    ```
 
 2. **Install dependencies:**
